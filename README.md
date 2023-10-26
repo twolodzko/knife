@@ -37,40 +37,41 @@ several places, it was not build for speed.
 
 ```shell
 $ hyperfine -N -r 10000 \
-  'echo "Mary had a little lamb." | cut -d" " -f 2-4' \
-  'echo "Mary had a little lamb." | knife 2-4'
-Benchmark 1: echo "Mary had a little lamb." | cut -d" " -f 2-4
-  Time (mean ± σ):       1.6 ms ±   0.2 ms    [User: 1.0 ms, System: 0.4 ms]
-  Range (min … max):     1.1 ms …   3.3 ms    10000 runs
+ 'echo "Marry had a little lamb." | cut -d" " -f 2-4' \
+ 'echo "Marry had a little lamb." | knife 2-4'
+Benchmark 1: echo "Marry had a little lamb." | cut -d" " -f 2-4
+  Time (mean ± σ):       1.5 ms ±   0.2 ms    [User: 1.0 ms, System: 0.4 ms]
+  Range (min … max):     1.1 ms …   5.0 ms    10000 runs
  
-  Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet system without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
+  Warning: The first benchmarking run for this command was significantly slower than the rest (4.3 ms). This could be caused by (filesystem) caches that were not filled until after the first run. You should consider using the '--warmup' option to fill those caches before the actual benchmark. Alternatively, use the '--prepare' option to clear the caches before each timing run.
  
-Benchmark 2: echo "Mary had a little lamb." | knife 2-4
-  Time (mean ± σ):       1.4 ms ±   0.1 ms    [User: 0.9 ms, System: 0.3 ms]
-  Range (min … max):     1.1 ms …   2.9 ms    10000 runs
+Benchmark 2: echo "Marry had a little lamb." | knife 2-4
+  Time (mean ± σ):       1.5 ms ±   0.1 ms    [User: 1.0 ms, System: 0.4 ms]
+  Range (min … max):     1.1 ms …   3.7 ms    10000 runs
  
   Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet system without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
  
 Summary
-  echo "Mary had a little lamb." | knife 2-4 ran
-    1.11 ± 0.15 times faster than echo "Mary had a little lamb." | cut -d" " -f 2-4
+  echo "Marry had a little lamb." | knife 2-4 ran
+    1.00 ± 0.17 times faster than echo "Marry had a little lamb." | cut -d" " -f 2-4
+
 
 $ hyperfine -N \
-  "cut -d' ' -f 2-10 IMDB\ Dataset.csv" \
-  "knife 2-10 IMDB\ Dataset.csv"                                       
-Benchmark 1: cut -d' ' -f 2-10 IMDB\ Dataset.csv
-  Time (mean ± σ):     247.0 ms ±  23.5 ms    [User: 211.5 ms, System: 35.2 ms]
-  Range (min … max):   237.1 ms … 313.7 ms    10 runs
+  "cut -d' ' -f 2-5,20 IMDB\ Dataset.csv" \
+  "knife 2-5,20 IMDB\ Dataset.csv"                                   
+Benchmark 1: cut -d' ' -f 2-5,20 IMDB\ Dataset.csv
+  Time (mean ± σ):     252.0 ms ±  48.8 ms    [User: 211.9 ms, System: 38.4 ms]
+  Range (min … max):   233.6 ms … 390.8 ms    10 runs
  
-  Warning: The first benchmarking run for this command was significantly slower than the rest (313.7 ms). This could be caused by (filesystem) caches that were not filled until after the first run. You should consider using the '--warmup' option to fill those caches before the actual benchmark. Alternatively, use the '--prepare' option to clear the caches before each timing run.
+  Warning: The first benchmarking run for this command was significantly slower than the rest (390.8 ms). This could be caused by (filesystem) caches that were not filled until after the first run. You should consider using the '--warmup' option to fill those caches before the actual benchmark. Alternatively, use the '--prepare' option to clear the caches before each timing run.
  
-Benchmark 2: knife 2-10 IMDB\ Dataset.csv
-  Time (mean ± σ):     120.6 ms ±   2.0 ms    [User: 74.1 ms, System: 46.1 ms]
-  Range (min … max):   117.7 ms … 126.2 ms    23 runs
+Benchmark 2: knife 2-5,20 IMDB\ Dataset.csv
+  Time (mean ± σ):     123.3 ms ±   2.4 ms    [User: 74.8 ms, System: 48.2 ms]
+  Range (min … max):   119.5 ms … 130.3 ms    23 runs
  
 Summary
-  knife 2-10 IMDB\ Dataset.csv ran
-    2.05 ± 0.20 times faster than cut -d' ' -f 2-10 IMDB\ Dataset.csv
+  knife 2-5,20 IMDB\ Dataset.csv ran
+    2.04 ± 0.40 times faster than cut -d' ' -f 2-5,20 IMDB\ Dataset.csv
 ```
 
 

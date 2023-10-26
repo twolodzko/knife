@@ -1,3 +1,4 @@
+mod fields;
 mod knife;
 mod set;
 
@@ -9,7 +10,7 @@ use std::{
     path::PathBuf,
 };
 
-const HELP_TEXT: &str = "Select the fields specified using a pattern language:
+const FIELDS_HELP: &str = "Select the fields specified using a pattern language:
  N for N-th field (starting at 1),
  -N for all the fields up to N-th (inclusive),
  N- for all the fields from N-th (inclusive),
@@ -21,7 +22,7 @@ The extracted fields are printed in the order they appeared in the input.";
 #[derive(Parser, Debug)]
 struct Args {
     /// Select those fields, for example 1,3-5 for fields 1, 3, 4, and 5.
-    #[arg(allow_hyphen_values = true, long_help = HELP_TEXT)]
+    #[arg(allow_hyphen_values = true, long_help = FIELDS_HELP)]
     fields: Knife,
 
     /// Paths to the files to process, if not given, use Stdin.
