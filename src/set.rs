@@ -6,7 +6,7 @@ where
 {
     /// Single value
     Value(T),
-    /// A range of values (open or closed)
+    /// A range of values
     Range(T, T),
     /// Collection of values and/or ranges
     Mixed(Vec<Set<T>>),

@@ -89,9 +89,7 @@ fn try_parse_usize(chars: &[char]) -> Option<usize> {
     // because the parser below only allows numbers in the main for loop
     debug_assert!(chars.iter().all(|c| c.is_ascii_digit()));
 
-    Some(chars.iter().rev().enumerate().fold(0, |acc, (i, c)| {
-        acc + (*c as usize - 48) * usize::pow(10, i as u32)
-    }))
+    Some(chars.iter().fold(0, |acc, c| acc * 10 + *c as usize - 48))
 }
 
 impl FromStr for Fields {
@@ -168,6 +166,8 @@ mod tests {
     use test_case::test_case;
 
     #[test_case(&[], None; "empty")]
+    #[test_case(&['0'], Some(0); "zero")]
+    #[test_case(&['9', '9'], Some(99); "ninety-nine")]
     #[test_case(&['7'], Some(7); "single digit")]
     #[test_case(&['4', '2'], Some(42); "two digits")]
     #[test_case(&['1', '0', '3', '7'], Some(1037); "four digits")]
