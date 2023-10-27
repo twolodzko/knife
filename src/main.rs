@@ -1,6 +1,6 @@
-mod fields;
 mod knife;
-mod set;
+mod matcher;
+mod parser;
 
 use clap::Parser;
 use knife::Knife;
@@ -15,7 +15,7 @@ const FIELDS_HELP: &str = "Select the fields specified using a pattern language:
  -N for all the fields up to N-th (inclusive),
  N- for all the fields from N-th (inclusive),
  N-M for a closed range,
- and comma-separated list for a combination, like 1,3-5.
+ and comma-separated list for a combination, like 1,3-5. Using : instead of - is also allowed.
 The extracted fields are printed in the order they appeared in the input.";
 
 /// Like the cut command, but delimits fields with whitespaces.
