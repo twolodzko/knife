@@ -10,19 +10,22 @@ use std::{
     path::PathBuf,
 };
 
-const FIELDS_HELP: &str = "Select the fields specified using a pattern language:
- N for N-th field (starting at 1),
- -N for all the fields up to N-th (inclusive),
- N- for all the fields from N-th (inclusive),
- N-M for a closed range,
- and comma-separated list for a combination, like 1,3-5. Using : instead of - is also allowed.
-The extracted fields are printed in the order they appeared in the input.";
+const DETAILS: &str = color_print::cstr!(
+    "<u><s>Details:</s></u>
+
+The <<FIELDS>> are specified using a pattern language where N stands for for N-th field (starting at 1), \
+-N for all the fields up to N-th (inclusive), N- for all the fields starting from N-th (inclusive), \
+N-M for a closed range, and comma-separated list for a combination of the patterns. \
+It is also possible to use : instead of - for defining ranges.
+
+The extracted fields are printed in the order they appeared in the input.");
 
 /// Like the cut command, but delimits fields with whitespaces.
 #[derive(Parser, Debug)]
+#[command(after_long_help = DETAILS)]
 struct Args {
-    /// Select those fields, for example 1,3-5 for fields 1, 3, 4, and 5.
-    #[arg(allow_hyphen_values = true, long_help = FIELDS_HELP)]
+    /// Select those fields, for example, 1,3-5 means fields 1, 3, 4, and 5.
+    #[arg(allow_hyphen_values = true)]
     fields: Knife,
 
     /// Paths to the files to process, if not given, use Stdin.
