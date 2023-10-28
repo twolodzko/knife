@@ -18,7 +18,8 @@ The <<FIELDS>> are specified using a pattern language where N stands for for N-t
 N-M for a closed range, and comma-separated list for a combination of the patterns. \
 It is also possible to use : instead of - for defining ranges.
 
-The extracted fields are printed in the order they appeared in the input.");
+The extracted fields are printed in the order they appeared in the input. If no fields were extracted, nothing is \
+printed.");
 
 /// Like the cut command, but delimits fields with whitespaces.
 #[derive(Parser, Debug)]

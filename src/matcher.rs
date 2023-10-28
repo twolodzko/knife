@@ -12,6 +12,7 @@ pub enum Pattern {
 }
 
 impl Pattern {
+    /// Smallest index in the pattern
     fn min(self) -> usize {
         use Pattern::{Range, Value};
         match self {
@@ -20,6 +21,7 @@ impl Pattern {
         }
     }
 
+    /// Largest index in the pattern
     fn max(self) -> usize {
         use Pattern::{Range, Value};
         match self {
@@ -56,9 +58,9 @@ impl Matcher {
         }
     }
 
-    /// Check if `index` matches one of the patterns
+    /// Check if pattern contains the `index`
     #[inline]
-    fn matches(&mut self, index: usize) -> bool {
+    fn contains(&mut self, index: usize) -> bool {
         use Pattern::{Range, Value};
 
         if self.position >= self.pattern.len() {
@@ -76,7 +78,7 @@ impl Matcher {
                 Ordering::Greater => {
                     // check the next pattern
                     self.position += 1;
-                    self.matches(index)
+                    self.contains(index)
                 }
                 Ordering::Equal => {
                     // it's a match, move to the next pattern
@@ -98,7 +100,7 @@ impl Matcher {
                 } else {
                     // check the next pattern
                     self.position += 1;
-                    self.matches(index)
+                    self.contains(index)
                 }
             }
         }
@@ -139,7 +141,7 @@ impl<I: Iterator> Iterator for MatcherIterator<I> {
 
     fn next(&mut self) -> Option<Self::Item> {
         let (index, value) = self.iterable.next()?;
-        if self.matcher.matches(index) {
+        if self.matcher.contains(index) {
             Some(value)
         } else {
             // skip this item, try the next one
@@ -175,25 +177,25 @@ mod tests {
     #[test_case(&[Range(1, 3), Range(5, 7)], 4, false; "higher than first range and lower than second")]
     #[test_case(&[Range(1, 3), Value(5), Range(6, 7)], 5, true; "matched by value in mixed patterns")]
     #[test_case(&[Range(1, 3), Value(5), Range(6, 7)], 6, true; "matched by second range in mixed patterns")]
-    fn matches(pattern: &[Pattern], example: usize, expected: bool) {
+    fn contains(pattern: &[Pattern], example: usize, expected: bool) {
         let mut matcher = Matcher::new(pattern.to_vec());
-        assert_eq!(matcher.matches(example), expected);
+        assert_eq!(matcher.contains(example), expected);
     }
 
     #[test]
     fn lower_than_any_value() {
         let mut matcher = Matcher::new(vec![Value(1), Value(2), Value(3)]);
-        assert!(!matcher.matches(0), "not matched");
+        assert!(!matcher.contains(0), "not matched");
         assert_eq!(matcher.position, 0, "index not incremented");
     }
 
     #[test]
     fn higher_than_any_value() {
         let mut matcher = Matcher::new(vec![Value(1), Value(2), Value(3)]);
-        assert!(!matcher.matches(6), "not matched");
+        assert!(!matcher.contains(6), "not matched");
         assert_eq!(matcher.position, 3, "index was incremented");
 
-        assert!(!matcher.matches(7), "not matched");
+        assert!(!matcher.contains(7), "not matched");
         assert_eq!(matcher.position, 3, "index was not incremented again");
     }
 
@@ -201,11 +203,11 @@ mod tests {
     fn patterns_overlap() {
         let mut matcher = Matcher::new(vec![Value(2), Value(2), Value(2)]);
 
-        assert!(matcher.matches(2), "first value was correctly matched");
+        assert!(matcher.contains(2), "first value was correctly matched");
         assert_eq!(matcher.position, 1, "index was incremented");
 
         assert!(
-            !matcher.matches(3),
+            !matcher.contains(3),
             "second value was correctly not matched"
         );
         assert_eq!(matcher.position, 3, "indexes were skipped as expected");
@@ -253,7 +255,7 @@ mod tests {
     ]
     fn match_whole_pattern(pattern: &[Pattern], expected: &[bool]) {
         let mut matcher = Matcher::new(pattern.to_vec());
-        let result: Vec<bool> = (0..=9).map(|x| matcher.matches(x)).collect();
+        let result: Vec<bool> = (0..=9).map(|x| matcher.contains(x)).collect();
         assert_eq!(&result, expected);
     }
 
