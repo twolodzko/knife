@@ -56,15 +56,8 @@ impl Matcher {
         }
     }
 
-    /// Use `Matcher` to extract the values at matching indexes from the `iterable`
-    pub fn iter<I>(self, iterable: I) -> MatcherIterator<I>
-    where
-        I: Iterator,
-    {
-        MatcherIterator::new(self, iterable)
-    }
-
     /// Check if `index` matches one of the patterns
+    #[inline]
     fn matches(&mut self, index: usize) -> bool {
         use Pattern::{Range, Value};
 
@@ -109,6 +102,15 @@ impl Matcher {
                 }
             }
         }
+    }
+
+    /// Use `Matcher` to extract the values at matching indexes from the `iterable`
+    #[inline]
+    pub fn iter<I>(self, iterable: I) -> MatcherIterator<I>
+    where
+        I: Iterator,
+    {
+        MatcherIterator::new(self, iterable)
     }
 }
 

@@ -4,6 +4,27 @@ use std::{cmp::Ordering, fmt::Display};
 const MIN: usize = 1;
 const MAX: usize = usize::MAX;
 
+#[derive(Debug, PartialEq)]
+pub enum Error {
+    CannotParse,
+    StartsAtOne,
+    Empty,
+}
+
+impl std::error::Error for Error {}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use Error::*;
+        let msg = match self {
+            CannotParse => "cannot parse the pattern",
+            Empty => "no fields specified",
+            StartsAtOne => "numbering starts at 1",
+        };
+        write!(f, "{}", msg)
+    }
+}
+
 /// Translate from 1-based indexing to 0-based
 #[inline]
 fn change_base(value: usize) -> usize {
@@ -33,27 +54,6 @@ impl Pattern {
             Ordering::Greater => Self::maybe_range(max, min),
             Ordering::Equal => Self::maybe_value(min),
         }
-    }
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Error {
-    CannotParse,
-    StartsAtOne,
-    Empty,
-}
-
-impl std::error::Error for Error {}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use Error::*;
-        let msg = match self {
-            CannotParse => "cannot parse the pattern",
-            Empty => "no fields specified",
-            StartsAtOne => "numbering starts at 1",
-        };
-        write!(f, "{}", msg)
     }
 }
 
