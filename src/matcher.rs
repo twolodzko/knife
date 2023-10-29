@@ -31,7 +31,7 @@ impl Pattern {
     }
 }
 
-/// `Matcher` matched the pattern iteratively, in linear time or faster
+/// `Matcher` matches the pattern iteratively, in linear time or faster
 #[derive(Debug, PartialEq, Clone)]
 pub struct Matcher {
     position: usize,
