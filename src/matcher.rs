@@ -75,15 +75,15 @@ impl Matcher {
                     // index is not yet there
                     false
                 }
-                Ordering::Greater => {
-                    // check the next pattern
-                    self.position += 1;
-                    self.contains(index)
-                }
                 Ordering::Equal => {
                     // it's a match, move to the next pattern
                     self.position += 1;
                     true
+                }
+                Ordering::Greater => {
+                    // check the next pattern
+                    self.position += 1;
+                    self.contains(index)
                 }
             },
             Range(min, max) => {
