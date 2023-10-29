@@ -106,18 +106,18 @@ impl Matcher {
         }
     }
 
-    /// Use `Matcher` to extract the values at matching indexes from the `iterable`
+    /// Take iterator and return an iterator returning only the items matching the `pattern`
     #[inline]
-    pub fn iter<I>(self, iterable: I) -> MatcherIterator<I>
+    pub fn iter<I>(self, iterable: I) -> Filter<I>
     where
         I: Iterator,
     {
-        MatcherIterator::new(self, iterable)
+        Filter::new(self, iterable)
     }
 }
 
-/// Iterator returning items filtered using the `Matcher`
-pub struct MatcherIterator<I>
+/// Iterator returning the items filtered using the `Matcher`
+pub struct Filter<I>
 where
     I: Iterator,
 {
@@ -125,7 +125,7 @@ where
     iterable: Skip<Take<Enumerate<I>>>,
 }
 
-impl<I: Iterator> MatcherIterator<I> {
+impl<I: Iterator> Filter<I> {
     fn new(matcher: Matcher, iterable: I) -> Self {
         let iterable = iterable
             .enumerate()
@@ -136,7 +136,7 @@ impl<I: Iterator> MatcherIterator<I> {
     }
 }
 
-impl<I: Iterator> Iterator for MatcherIterator<I> {
+impl<I: Iterator> Iterator for Filter<I> {
     type Item = I::Item;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -264,10 +264,10 @@ mod tests {
     #[test_case(&[Range(2, 5)], &[2, 3, 4, 5]; "subset")]
     #[test_case(&[Range(7, 12)], &[7, 8, 9]; "range exceeds input")]
     #[test_case(&[Range(2, 4), Range(7, 8)], &[2, 3, 4, 7, 8]; "two ranges")]
-    fn iterate(pattern: &[Pattern], expected: &[u32]) {
+    fn filter(pattern: &[Pattern], expected: &[u32]) {
         let matcher = Matcher::new(pattern.to_vec());
-        let iter = matcher.iter(0..=9);
-        let result: Vec<u32> = iter.collect();
+        let filter = matcher.iter(0..=9);
+        let result: Vec<u32> = filter.collect();
         assert_eq!(result, expected);
     }
 }
