@@ -38,18 +38,18 @@ cargo install --git https://github.com/twolodzko/knife.git
 It should perform roughly the same or better than `cut`.
 
 ```shell
-$ hyperfine -N -r 10000 'echo "Marry had a little lamb." | cut -d" " -f 2-4' 'echo "Marry had a little lamb." | knife 2-4'
-Benchmark 1: echo "Marry had a little lamb." | cut -d" " -f 2-4
+$ hyperfine -N -r 10000 'echo "Mary had a little lamb." | cut -d" " -f 2-4' 'echo "Mary had a little lamb." | knife 2-4'
+Benchmark 1: echo "Mary had a little lamb." | cut -d" " -f 2-4
   Time (mean ± σ):       1.7 ms ±   0.4 ms    [User: 1.0 ms, System: 0.6 ms]
   Range (min … max):     1.0 ms …   4.9 ms    10000 runs
  
-Benchmark 2: echo "Marry had a little lamb." | knife 2-4
+Benchmark 2: echo "Mary had a little lamb." | knife 2-4
   Time (mean ± σ):       1.7 ms ±   0.5 ms    [User: 1.0 ms, System: 0.6 ms]
   Range (min … max):     1.0 ms …   4.5 ms    10000 runs
  
 Summary
-  echo "Marry had a little lamb." | knife 2-4 ran
-    1.00 ± 0.38 times faster than echo "Marry had a little lamb." | cut -d" " -f 2-4
+  echo "Mary had a little lamb." | knife 2-4 ran
+    1.00 ± 0.38 times faster than echo "Mary had a little lamb." | cut -d" " -f 2-4
 
 $ hyperfine -w 3 -N "cut -d' ' -f 2-10,50 IMDB\ Dataset.csv" "knife 2-10,50 IMDB\ Dataset.csv"
 Benchmark 1: cut -d' ' -f 2-10,50 IMDB\ Dataset.csv
