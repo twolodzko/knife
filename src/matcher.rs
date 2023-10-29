@@ -31,7 +31,7 @@ impl Pattern {
     }
 }
 
-/// `Matcher` matches the pattern iteratively, in linear time or faster
+/// Matches the pattern iteratively, in linear time or faster
 #[derive(Debug, PartialEq, Clone)]
 pub struct Matcher {
     position: usize,
@@ -106,7 +106,7 @@ impl Matcher {
         }
     }
 
-    /// Take iterator and return an iterator returning only the items matching the `pattern`
+    /// Take iterator and return an iterator returning only the items matching the pattern
     #[inline]
     pub fn iter<I>(self, iterable: I) -> Filter<I>
     where
