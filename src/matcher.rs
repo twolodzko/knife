@@ -1,7 +1,6 @@
 use std::{
     cmp::Ordering,
     iter::{Enumerate, Skip, Take},
-    usize,
 };
 
 /// The indexes to be matched
