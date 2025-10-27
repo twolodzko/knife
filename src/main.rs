@@ -6,7 +6,7 @@ use clap::Parser;
 use knife::Knife;
 use std::{
     fs::File,
-    io::{self, BufRead, BufReader, Read},
+    io::{self, BufRead, BufReader, Read, Write},
     path::PathBuf,
 };
 
@@ -37,7 +37,7 @@ struct Args {
 type Reader = BufReader<Box<dyn Read>>;
 
 #[inline]
-fn process_lines(reader: Reader, knife: &Knife) {
+fn process_lines(reader: Reader, out: &mut io::StdoutLock, knife: &Knife) {
     reader
         .lines()
         .filter_map(|line| {
@@ -51,8 +51,10 @@ fn process_lines(reader: Reader, knife: &Knife) {
             }
         })
         .for_each(|ref line| {
-            let fields = knife.extract(line);
-            println!("{}", fields.join(" "));
+            let fields = knife.extract(line).join(" ");
+            if let Err(err) = out.write_all(fields.as_bytes()) {
+                eprintln!("{}", err)
+            }
         })
 }
 
@@ -60,9 +62,11 @@ fn main() {
     let args = Args::parse();
 
     let mut reader: Reader;
+    let mut out = io::stdout().lock();
+
     if args.file.is_empty() {
         reader = BufReader::new(Box::new(io::stdin()));
-        process_lines(reader, &args.fields);
+        process_lines(reader, &mut out, &args.fields);
     } else {
         for path in &args.file {
             reader = match File::open(path) {
@@ -72,7 +76,7 @@ fn main() {
                     std::process::exit(1);
                 }
             };
-            process_lines(reader, &args.fields);
+            process_lines(reader, &mut out, &args.fields);
         }
     }
 }
