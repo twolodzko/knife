@@ -9,6 +9,7 @@ use std::{
     io::{self, BufRead, BufReader, Read, Write},
     path::PathBuf,
 };
+use unescape::unescape;
 
 const DETAILS: &str = color_print::cstr!(
     "<u><s>Details:</s></u>
@@ -25,6 +26,17 @@ printed.");
 #[derive(Parser, Debug)]
 #[command(after_long_help = DETAILS)]
 struct Args {
+    /// Join the output fields with the separator. The escaped unicode characters like \t are allowed.
+    /// If in doubt, the separator would be used as-is.
+    #[arg(
+        short,
+        long,
+        value_name = "STRING",
+        allow_hyphen_values = true,
+        default_value = " "
+    )]
+    output_separator: String,
+
     /// Select those fields, for example, 1,3-5 means fields 1, 3, 4, and 5.
     #[arg(allow_hyphen_values = true)]
     fields: Knife,
@@ -37,7 +49,7 @@ struct Args {
 type Reader = BufReader<Box<dyn Read>>;
 
 #[inline]
-fn process_lines(reader: Reader, out: &mut io::StdoutLock, knife: &Knife) {
+fn process_lines(reader: Reader, out: &mut io::StdoutLock, knife: &Knife, sep: &str) {
     reader
         .lines()
         .filter_map(|line| {
@@ -51,7 +63,7 @@ fn process_lines(reader: Reader, out: &mut io::StdoutLock, knife: &Knife) {
             }
         })
         .for_each(|ref line| {
-            let fields = knife.extract(line).join(" ");
+            let fields = knife.extract(line).join(sep);
             if let Err(err) = out.write_all(fields.as_bytes()) {
                 eprintln!("{}", err)
             }
@@ -60,13 +72,14 @@ fn process_lines(reader: Reader, out: &mut io::StdoutLock, knife: &Knife) {
 
 fn main() {
     let args = Args::parse();
+    let sep = unescape(&args.output_separator).unwrap_or(args.output_separator);
 
     let mut reader: Reader;
     let mut out = io::stdout().lock();
 
     if args.file.is_empty() {
         reader = BufReader::new(Box::new(io::stdin()));
-        process_lines(reader, &mut out, &args.fields);
+        process_lines(reader, &mut out, &args.fields, &sep);
     } else {
         for path in &args.file {
             reader = match File::open(path) {
@@ -76,7 +89,7 @@ fn main() {
                     std::process::exit(1);
                 }
             };
-            process_lines(reader, &mut out, &args.fields);
+            process_lines(reader, &mut out, &args.fields, &sep);
         }
     }
 }
