@@ -64,7 +64,7 @@ fn process_lines(reader: Reader, out: &mut io::StdoutLock, knife: &Knife, sep: &
         })
         .for_each(|ref line| {
             let fields = knife.extract(line).join(sep);
-            if let Err(err) = out.write_all(fields.as_bytes()) {
+            if let Err(err) = writeln!(out, "{}", fields) {
                 eprintln!("{}", err)
             }
         })
